@@ -6,6 +6,7 @@ This is a simple console-based Todo List application written in C++. It allows u
 - **Edit Todos**: Modify existing tasks.
 - **Remove Todos**: Delete tasks from the list.
 - **Clear Todo List**: Remove all tasks at once.
+- **Mark Todos as Done/Undone**: Update the status of tasks to reflect completion.
 - **Display Todos**: View all tasks with their status and timestamps.
 
 ## Getting Started
