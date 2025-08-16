@@ -24,7 +24,7 @@ This is a simple console-based Todo List application written in C++. It allows u
    ```
 2. Compile the application: 
    ```bash
-   g++ -o todo_app main.cpp todo_functions.cpp
+   g++ main.cpp todo_functions.cpp  -o todo-list.exe -static -static-libgcc -static-libstdc++
    ```
 
 3. Run the application:

@@ -8,5 +8,6 @@ void addTodo(vector<Todo>& vec);
 void removeTodo(vector<Todo>& vec);
 void editTodo(vector<Todo>& vec);
 void clearTodoList(vector<Todo>& vec);
+void markTodoDone(vector<Todo>& vec);
 
 #endif // !TODO_FUNCTIONS_H
