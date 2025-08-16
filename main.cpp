@@ -34,13 +34,13 @@ int main() {
   cout << "\n";
   int userInput = 0;
   vector<Todo> todoList;
-  todoList.push_back({1, "Buy milk", "From the grocery store", false, timestamp});
-  cout << endl;
-  for (const auto &t : todoList) {
-    cout << t.serialNo << ". " << t.title << " - " << t.description << " - "
-         << (t.isDone ? "Done" : "Not Done") << " - " << ctime(&t.timestamp)
-         << endl;
-  }
+  // todoList.push_back({1, "Buy milk", "From the grocery store", false, timestamp});
+  // cout << endl;
+  // for (const auto &t : todoList) {
+  //   cout << t.serialNo << ". " << t.title << " - " << t.description << " - "
+  //        << (t.isDone ? "Done" : "Not Done") << " - " << ctime(&t.timestamp)
+  //        << endl;
+  // }
 
   bool flag = true;
   int count = 0;
@@ -51,10 +51,10 @@ int main() {
     }
 
     if (flag) {
-      cout << "\n1. To add a Todo";
-      cout << "\n2. To delete a Todo";
-      cout << "\n3. To edit a Todo";
-      cout << "\n4. To clear Todo List";
+      cout << "\nEnter 1 to add a Todo";
+      cout << "\nEnter 2 to delete a Todo";
+      cout << "\nEnter 3 to edit a Todo";
+      cout << "\nEnter 4 to clear Todo List";
       cout << endl;
     }
     flag = false;
