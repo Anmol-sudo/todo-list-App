@@ -5,7 +5,7 @@
 #include <ctime>
 
 struct Todo {
-    int serialNo;
+    std::string id;
     std::string title;
     std::string description;
     bool isDone;

@@ -1,13 +1,21 @@
 #ifndef TODO_FUNCTIONS_H
 #define TODO_FUNCTIONS_H
+
 #include "todo.h"
-#include <vector>  
-using namespace std; 
+#include <string>
+#include <vector>
 
-void addTodo(vector<Todo>& vec);
-void removeTodo(vector<Todo>& vec);
-void editTodo(vector<Todo>& vec);
-void clearTodoList(vector<Todo>& vec);
-void markTodoDone(vector<Todo>& vec);
+using namespace std;
 
-#endif // !TODO_FUNCTIONS_H
+// Firebase operations
+void addTodoToFirebase(const Todo& todo, const string& firebaseUrl);
+void removeTodoFromFirebase(const string& todoId, const string& firebaseUrl); // Fixed typo: firebaseUrln -> firebaseUrl
+void editTodoInFirebase(const Todo& todo, const string& firebaseUrl);
+void markTodoDoneInFirebase(const string& todoId, bool isDone, const string& firebaseUrl);
+vector<Todo> getAllTodosFromFirebase(const string& firebaseUrl);
+
+// Helpers
+string getNonEmptyInput(const string& prompt, bool clearBuffer = false);
+int getValidIndex(const vector<Todo>& vec, const string& action);
+
+#endif

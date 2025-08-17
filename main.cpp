@@ -1,106 +1,103 @@
-// main.cpp
 #include "todo_functions.h"
-#include "todo.h"
 #include <iostream>
-#include <limits>
+#include <cstdlib>
 #include <ctime>
-#include <vector>
 using namespace std;
+
+const string FIREBASE_URL = getenv("FIREBASE_URL") ? getenv("FIREBASE_URL") : "";
 
 void printWithBorder(const string &text) {
     int length = text.length();
     string border = "+" + string(length + 2, '-') + "+";
-
     cout << border << endl;
     cout << "  " << text << endl;
     cout << border << endl;
 }
 
 void printMenu() {
-    cout << "\n====== MENU ======" << endl;
-    cout << "1. Add a Todo" << endl;
-    cout << "2. Delete a Todo" << endl;
-    cout << "3. Edit a Todo" << endl;
-    cout << "4. Clear Todo List" << endl;
-    cout << "5. Mark a Todo as done/undone" << endl;
-    cout << "6. Exit" << endl;
-    cout << "==================" << endl;
+    cout << "\n====== MENU ======\n";
+    cout << "1. Add a Todo\n";
+    cout << "2. Delete a Todo\n";
+    cout << "3. Edit a Todo\n";
+    cout << "4. Clear Todo List\n";
+    cout << "5. Mark a Todo as done/undone\n";
+    cout << "6. Exit\n";
+    cout << "==================\n";
     cout << "Enter choice: ";
 }
 
-// safe integer input
-int getIntInput(const string &prompt) {
-    int value;
-    while (true) {
-        cout << prompt;
-        if (cin >> value) {
-            return value;
-        }
-        if (cin.eof()) {
-            cout << "\nExiting...\n";
-            exit(0);
-        }
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid input. Please enter a number.\n";
-    }
-}
-
 int main() {
-    // Date and Time
+    cout << "\n====================\n";
+    cout << "Welcome to Todo List\n";
+    cout << "====================\n";
+
     time_t timestamp;
     time(&timestamp);
-
-    cout << "\n====================" << endl;
-    cout << "Welcome to Todo List" << endl;
-    cout << "====================" << endl;
     printWithBorder(ctime(&timestamp));
-    cout << "\n";
-
-    vector<Todo> todoList;
 
     while (true) {
-        printMenu();
-        int userInput = getIntInput("");
+        vector<Todo> todoList = getAllTodosFromFirebase(FIREBASE_URL);
 
-        switch (userInput) {
-            case 1:
-                addTodo(todoList);
-                break;
-            case 2:
-                if (todoList.empty()) cout << "No todos to delete.\n";
-                else removeTodo(todoList);
-                break;
-            case 3:
-                if (todoList.empty()) cout << "No todos to edit.\n";
-                else editTodo(todoList);
-                break;
-            case 4:
-                if (todoList.empty()) cout << "List is already empty.\n";
-                else clearTodoList(todoList);
-                break;
-             case 5:
-                if (todoList.empty()) cout << "List is already empty.\n";
-                else markTodoDone(todoList);
-                break;
-            case 6:
-                cout << "Exiting... Goodbye!\n";
-                return 0;
-            default:
-                cout << "Invalid choice. Please try again.\n";
-                
-        }
-
-        // Display current todos
+      
         if (!todoList.empty()) {
             cout << "\nCurrent Todo List:\n";
-            for (const auto &t : todoList) {
-                cout << t.serialNo << ". " << t.title 
+            int idx = 1;
+            for (auto &t : todoList) {
+                cout << idx++ << ". " << t.title 
                      << " - " << t.description 
                      << " - " << (t.isDone ? "Done" : "Not Done")
                      << " - " << ctime(&t.timestamp);
             }
         }
-        cout << endl;
+
+        printMenu();
+        int userInput;
+        cin >> userInput;
+        
+
+        switch (userInput) {
+            case 1: {
+                Todo t;
+                t.title = getNonEmptyInput("Enter title: ", true);
+                t.description = getNonEmptyInput("Enter description: ");
+                t.isDone = false;
+                t.timestamp = time(nullptr);
+                addTodoToFirebase(t, FIREBASE_URL);
+                break;
+            }
+            case 2: {
+                if (todoList.empty()) { cout << "No todos to delete.\n"; break; }
+                int idx = getValidIndex(todoList, "delete");
+                removeTodoFromFirebase(todoList[idx].id, FIREBASE_URL);
+                break;
+            }
+            case 3: {
+                if (todoList.empty()) { cout << "No todos to edit.\n"; break; }
+                int idx = getValidIndex(todoList, "edit");
+                Todo t = todoList[idx];
+                t.title = getNonEmptyInput("New title: ");
+                t.description = getNonEmptyInput("New description: ");
+                editTodoInFirebase(t, FIREBASE_URL);
+                break;
+            }
+            case 4: {
+                cout << "Clearing all todos...\n";
+                for (auto &t : todoList)
+                    removeTodoFromFirebase(t.id, FIREBASE_URL);
+                break;
+            }
+            case 5: {
+                if (todoList.empty()) { cout << "No todos to mark.\n"; break; }
+                int idx = getValidIndex(todoList, "mark");
+                bool newStatus = !todoList[idx].isDone;
+                markTodoDoneInFirebase(todoList[idx].id, newStatus, FIREBASE_URL);
+                break;
+            }
+            case 6:
+                cout << "Exiting... Goodbye!\n";
+                return 0;
+            default:
+                cout << "Invalid choice.\n";
+        }
     }
 }
